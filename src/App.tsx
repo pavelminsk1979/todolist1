@@ -17,6 +17,11 @@ function App() {
         {id: v1(), title: 'EUROS', isDone: true},
         {id: v1(), title: 'DOG', isDone: false},
     ])
+
+    const changeChecbox = (idTask: string,isDone:boolean) => {
+        setTasks(tasks.map(t=>t.id===idTask?{...t,isDone}:t))
+    }
+
     const removeTask = (idTask: string) => {
         setTasks(tasks.filter(t => t.id !== idTask))
         console.log(tasks)
@@ -41,6 +46,8 @@ function App() {
     return (
         <div className={style.app}>
             <Todolist
+                filter={filter}
+                changeChecbox={changeChecbox}
                 addedTask={addedTask}
                 filterTask={filterTask}
                 removeTask={removeTask}
