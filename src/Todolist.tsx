@@ -1,20 +1,35 @@
-import React from "react";
-import {TasksType} from "./App";
+import React, {ChangeEvent,KeyboardEvent, useState} from "react";
+import {FilterType, TasksType} from "./App";
 
 type TodolistType = {
     title: string
     tasks: Array<TasksType>
-    removeTask:(idTask:number)=>void
-    filterTask:(valueFilter:string)=>void
+    removeTask:(idTask:string)=>void
+    filterTask:(valueFilter:FilterType)=>void
+    addedTask:(title: string)=>void
 }
 
 export function Todolist(props: TodolistType) {
+    const[title,setTitle]=useState('')
 
-    const removeTaskHandler = (idTask:number) => {
+    const addedStateInputHandler = (e:ChangeEvent<HTMLInputElement>) => {
+        setTitle(e.currentTarget.value)
+    }
+
+    const  addedTaskHandler = () => {
+      props.addedTask(title)
+        setTitle('')
+    }
+
+    const onKeyPressEnterHandler = (e:KeyboardEvent<HTMLInputElement>) => {
+if(e.key==='Enter'){addedTaskHandler()}
+    }
+
+    const removeTaskHandler = (idTask:string) => {
         props.removeTask(idTask)
     }
 
-    const filterTaskHandler = (valueFilter:string) => {
+    const filterTaskHandler = (valueFilter:FilterType) => {
       props.filterTask(valueFilter)
     }
 
@@ -22,8 +37,14 @@ export function Todolist(props: TodolistType) {
         <div>
             <h2>{props.title}</h2>
             <div>
-                <input/>
-                <button>+</button>
+                <input
+                    onKeyPress={onKeyPressEnterHandler}
+                    value={title}
+                    onChange={addedStateInputHandler}
+                />
+                <button
+                    onClick={addedTaskHandler}
+                >+</button>
             </div>
 
             <ul>
