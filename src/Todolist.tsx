@@ -1,83 +1,70 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from "react";
 import {FilterType, TasksType} from "./App";
 import style from './todolist.module.css'
+import {InputPlusListBox} from "./InputPlusListBox";
+import {EditHeaderTitle} from "./EditHeaderTitle";
 
 type TodolistType = {
     title: string
     tasks: Array<TasksType>
-    removeTask: (todolistID:string,idTask: string) => void
-    filterTask: (todolistID:string,valueFilter: FilterType) => void
-    addedTask: (todolistID:string,title: string) => void
-    changeChecbox: ( todolistID:string,idTask: string, isDone: boolean) => void
-    filter:FilterType
-    todolistID:string
-    deleteTodolist:(todolistID:string)=>void
+    removeTask: (todolistID: string, idTask: string) => void
+    filterTask: (todolistID: string, valueFilter: FilterType) => void
+    addedTask: (todolistID: string, title: string) => void
+    changeChecbox: (todolistID: string, idTask: string, isDone: boolean) => void
+    filter: FilterType
+    todolistID: string
+    deleteTodolist: (todolistID: string) => void
+    editTitleTask: (todolistID: string, idTask: string, text: string) => void
+    editTitleTodolist: (todolistID: string, text: string) => void
+
 }
 
 export function Todolist(props: TodolistType) {
-    const [title, setTitle] = useState('')
-    const [redMessage,setRedMessage]=useState<string|null>(null)
 
-    const addedStateInputHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.currentTarget.value)
-        setRedMessage(null)
+    const editTitleTodolistHandler = (text: string) => {
+        props.editTitleTodolist(props.todolistID, text)
     }
 
-    const addedTaskHandler = () => {
-        if(title.trim()!==''){
-            props.addedTask(props.todolistID,title.trim())
-        }else{
-            setRedMessage('Title is required')
-        }
-        setTitle('')
+    const editTitleTaskHandler = (idTask: string, text: string) => {
+        props.editTitleTask(props.todolistID, idTask, text)
     }
 
-    const onKeyPressEnterHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            addedTaskHandler()
-        }
+    const removeTaskHandler = (todolistID: string, idTask: string) => {
+        props.removeTask(todolistID, idTask)
     }
 
-    const removeTaskHandler = (todolistID:string,idTask: string) => {
-        props.removeTask(todolistID,idTask)
+    const filterTaskHandler = (todolistID: string, valueFilter: FilterType) => {
+        props.filterTask(todolistID, valueFilter)
     }
 
-    const filterTaskHandler = (todolistID:string,valueFilter: FilterType) => {
-        props.filterTask(todolistID,valueFilter)
-    }
-
-    const changeChecboxHandler = ( todolistID:string,idTask: string, isDone: boolean) => {
-        props.changeChecbox( todolistID,idTask, isDone)
+    const changeChecboxHandler = (todolistID: string, idTask: string, isDone: boolean) => {
+        props.changeChecbox(todolistID, idTask, isDone)
     }
 
     const deleteTodolistHandler = () => {
-      props.deleteTodolist(props.todolistID)
+        props.deleteTodolist(props.todolistID)
     }
 
+    const addedTaskHandler = (title: string) => {
+        props.addedTask(props.todolistID, title)
+    }
 
     return (
-        <div>
+        <div style={{minWidth: '250px'}}>
             <h3>
-                {props.title}
+                <EditHeaderTitle
+                    colback={editTitleTodolistHandler}
+                    text={props.title}/>
+
                 <button
                     onClick={deleteTodolistHandler}
-                    className={style.deletListBox}>X</button>
+                    className={style.deletListBox}>X
+                </button>
             </h3>
 
-               {/* <button className={style.buttonPlasListBox}>plas list box</button>*/}
-
-            <div>
-                <input className={redMessage ? style.redFrame:style.input}
-                    onKeyPress={onKeyPressEnterHandler}
-                    value={title}
-                    onChange={addedStateInputHandler}
-                />
-                <button
-                    onClick={addedTaskHandler}
-                >+
-                </button>
-            </div>
-            {redMessage&&<div className={style.redMessage}>{redMessage} </div>}
+            <InputPlusListBox
+                colback={addedTaskHandler}
+            />
 
             <ul>
                 {
@@ -87,14 +74,19 @@ export function Todolist(props: TodolistType) {
                                 <input
                                     onChange={(e) => {
                                         changeChecboxHandler(
-                                            props.todolistID,el.id, e.currentTarget.checked)
+                                            props.todolistID, el.id, e.currentTarget.checked)
                                     }}
                                     type='checkbox'
                                     checked={el.isDone}
                                 />
-                                <span>{el.title}</span>
+                                <EditHeaderTitle
+                                    colback={
+                                        (text: string) => editTitleTaskHandler(el.id, text)}
+                                    text={el.title}
+                                />
                                 <button onClick={
-                                    () => removeTaskHandler(props.todolistID,el.id)}>del</button>
+                                    () => removeTaskHandler(props.todolistID, el.id)}>del
+                                </button>
                             </li>
                         )
                     })
@@ -103,17 +95,20 @@ export function Todolist(props: TodolistType) {
             </ul>
             <div>
                 <button
-                    className={props.filter==='all' ? style.buttonFilter : ''}
-                    onClick={() => filterTaskHandler(props.todolistID,'all')}
-                >ALL</button>
+                    className={props.filter === 'all' ? style.buttonFilter : ''}
+                    onClick={() => filterTaskHandler(props.todolistID, 'all')}
+                >ALL
+                </button>
                 <button
-                    className={props.filter==='yes' ? style.buttonFilter : ''}
-                    onClick={() => filterTaskHandler(props.todolistID,'yes')}
-                >YES</button>
+                    className={props.filter === 'yes' ? style.buttonFilter : ''}
+                    onClick={() => filterTaskHandler(props.todolistID, 'yes')}
+                >YES
+                </button>
                 <button
-                    className={props.filter==='no' ? style.buttonFilter : ''}
-                    onClick={() => filterTaskHandler(props.todolistID,'no')}>
-                    NO</button>
+                    className={props.filter === 'no' ? style.buttonFilter : ''}
+                    onClick={() => filterTaskHandler(props.todolistID, 'no')}>
+                    NO
+                </button>
             </div>
         </div>
     )
