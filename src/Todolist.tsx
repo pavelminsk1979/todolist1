@@ -5,11 +5,13 @@ import style from './todolist.module.css'
 type TodolistType = {
     title: string
     tasks: Array<TasksType>
-    removeTask: (idTask: string) => void
-    filterTask: (valueFilter: FilterType) => void
-    addedTask: (title: string) => void
-    changeChecbox: (idTask: string, isDone: boolean) => void
+    removeTask: (todolistID:string,idTask: string) => void
+    filterTask: (todolistID:string,valueFilter: FilterType) => void
+    addedTask: (todolistID:string,title: string) => void
+    changeChecbox: ( todolistID:string,idTask: string, isDone: boolean) => void
     filter:FilterType
+    todolistID:string
+    deleteTodolist:(todolistID:string)=>void
 }
 
 export function Todolist(props: TodolistType) {
@@ -23,7 +25,7 @@ export function Todolist(props: TodolistType) {
 
     const addedTaskHandler = () => {
         if(title.trim()!==''){
-            props.addedTask(title.trim())
+            props.addedTask(props.todolistID,title.trim())
         }else{
             setRedMessage('Title is required')
         }
@@ -36,21 +38,34 @@ export function Todolist(props: TodolistType) {
         }
     }
 
-    const removeTaskHandler = (idTask: string) => {
-        props.removeTask(idTask)
+    const removeTaskHandler = (todolistID:string,idTask: string) => {
+        props.removeTask(todolistID,idTask)
     }
 
-    const filterTaskHandler = (valueFilter: FilterType) => {
-        props.filterTask(valueFilter)
+    const filterTaskHandler = (todolistID:string,valueFilter: FilterType) => {
+        props.filterTask(todolistID,valueFilter)
     }
 
-    const changeChecboxHandler = (idTask: string, isDone: boolean) => {
-        props.changeChecbox(idTask, isDone)
+    const changeChecboxHandler = ( todolistID:string,idTask: string, isDone: boolean) => {
+        props.changeChecbox( todolistID,idTask, isDone)
     }
+
+    const deleteTodolistHandler = () => {
+      props.deleteTodolist(props.todolistID)
+    }
+
 
     return (
         <div>
-            <h2>{props.title}</h2>
+            <h3>
+                {props.title}
+                <button
+                    onClick={deleteTodolistHandler}
+                    className={style.deletListBox}>X</button>
+            </h3>
+
+               {/* <button className={style.buttonPlasListBox}>plas list box</button>*/}
+
             <div>
                 <input className={redMessage ? style.redFrame:style.input}
                     onKeyPress={onKeyPressEnterHandler}
@@ -71,13 +86,15 @@ export function Todolist(props: TodolistType) {
                             <li key={el.id}>
                                 <input
                                     onChange={(e) => {
-                                        changeChecboxHandler(el.id, e.currentTarget.checked)
+                                        changeChecboxHandler(
+                                            props.todolistID,el.id, e.currentTarget.checked)
                                     }}
                                     type='checkbox'
                                     checked={el.isDone}
                                 />
                                 <span>{el.title}</span>
-                                <button onClick={() => removeTaskHandler(el.id)}>del</button>
+                                <button onClick={
+                                    () => removeTaskHandler(props.todolistID,el.id)}>del</button>
                             </li>
                         )
                     })
@@ -87,15 +104,15 @@ export function Todolist(props: TodolistType) {
             <div>
                 <button
                     className={props.filter==='all' ? style.buttonFilter : ''}
-                    onClick={() => filterTaskHandler('all')}
+                    onClick={() => filterTaskHandler(props.todolistID,'all')}
                 >ALL</button>
                 <button
                     className={props.filter==='yes' ? style.buttonFilter : ''}
-                    onClick={() => filterTaskHandler('yes')}
+                    onClick={() => filterTaskHandler(props.todolistID,'yes')}
                 >YES</button>
                 <button
                     className={props.filter==='no' ? style.buttonFilter : ''}
-                    onClick={() => filterTaskHandler('no')}>
+                    onClick={() => filterTaskHandler(props.todolistID,'no')}>
                     NO</button>
             </div>
         </div>
