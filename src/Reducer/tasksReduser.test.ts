@@ -1,5 +1,7 @@
+
 import {addTaskAC, changeTaskStatusAC, removeTaskAC, tasksReducer} from "./tasksReduser"
-import {StateTaskType} from "../App";
+import {StateTaskType} from "../AppWithReduser";
+
 
 test('correct task should be deleted from correct array', () => {
     const startState: StateTaskType = {
@@ -74,7 +76,7 @@ test('status of specified task should be changed', () => {
         ]
     }
 
-    const action = changeTaskStatusAC('2', false, 'todolistId2')
+    const action = changeTaskStatusAC('todolistId2','2', false, )
 
     const endState = tasksReducer(startState, action)
 
