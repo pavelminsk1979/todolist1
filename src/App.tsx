@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import style from './todolist.module.css'
 import {Todolist} from "./Todolist";
 import {v1} from "uuid";
+import {InputPlusListBox} from "./InputPlusListBox";
+
 
 export type TasksType = {
     id: string
@@ -34,15 +36,26 @@ function App() {
             {id: v1(), title: 'CAR', isDone: true},
             {id: v1(), title: 'PAPIROS', isDone: false},
             {id: v1(), title: 'EUROS', isDone: true},
-            {id: v1(), title: 'DOG', isDone: false},
         ],
         [todolist2]:[
             {id: v1(), title: 'NI', isDone: true},
             {id: v1(), title: 'CHE', isDone: false},
-            {id: v1(), title: 'GO', isDone: true},
-
         ],
     })
+
+    const addedTodolistHandler = (title: string) => {
+        const newTodolist=v1()
+        setTodolist([
+            {id: newTodolist, title: title, filter: 'all'},...todolist])
+    }
+
+    const editTitleTask = (todolistID: string, idTask: string, text: string) => {setTasks({...tasks,[todolistID]:tasks[todolistID].map(
+        e=>e.id===idTask?{...e,title:text}:e)})
+    }
+
+    const editTitleTodolist = (todolistID: string, text: string) => {
+        setTodolist(todolist.map(t=>t.id===todolistID?{...t,title:text}:t))
+    }
 
     const deleteTodolist=(todolistID:string)=>{
         setTodolist(todolist.filter(t=>t.id!==todolistID))
@@ -81,6 +94,9 @@ function App() {
 
     return (
         <div className={style.app}>
+            <InputPlusListBox
+                colback={addedTodolistHandler}
+            />
             {
                 todolist.map(t => {
 
@@ -95,6 +111,8 @@ function App() {
 
                     return (
                         <Todolist
+                            editTitleTask={editTitleTask}
+                            editTitleTodolist={editTitleTodolist}
                             deleteTodolist={deleteTodolist}
                             todolistID={t.id}
                             key={t.id}

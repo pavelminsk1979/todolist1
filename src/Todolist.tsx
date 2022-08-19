@@ -1,4 +1,4 @@
-import React, {ChangeEvent, KeyboardEvent, useState} from "react";
+import React from "react";
 import {FilterType, TasksType} from "./App";
 import style from './todolist.module.css'
 import {InputPlusListBox} from "./InputPlusListBox";
