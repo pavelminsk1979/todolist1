@@ -2,7 +2,8 @@ import React from "react";
 import style from './todolist.module.css'
 import {InputPlusListBox} from "./InputPlusListBox";
 import {EditHeaderTitle} from "./EditHeaderTitle";
-import {FilterType, TasksType} from "./AppWithReduser";
+import {FilterType, TasksType} from "./AppWithRedux";
+
 
 type TodolistType = {
     title: string
