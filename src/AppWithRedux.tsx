@@ -10,6 +10,8 @@ import {
 import {addTaskAC, changeTaskStatusAC, editTitleTaskAC, removeTaskAC, tasksReducer} from "./Reducer/tasksReduser";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "./Redux/Store";
+import { Clock } from './Clock';
+import {ClockMechanik} from "./ClockMechanik";
 
 
 export type TasksType = {
@@ -75,6 +77,8 @@ export function AppWithRedux() {
 
     return (
         <div className={style.app}>
+            <Clock/>
+            <ClockMechanik/>
             <InputPlusListBox
                 colback={addedTodolistHandler}
             />
